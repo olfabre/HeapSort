@@ -11,7 +11,6 @@
 
 using namespace std;
 
-
 /****************************************/
 /* Objectif : Echange
 /* Complexité : 0(1)
@@ -19,7 +18,7 @@ using namespace std;
 tas::tas(int max)
 {
 	this->max = max;
-	T = new int[max];	
+	T = new int[max];
 	n = 0;
 }
 
@@ -27,24 +26,23 @@ tas::tas(int max)
 /* Objectif : Constructeur
 /* Complexité : 0(n)
 /****************************************/
-tas::tas(char* filename){
+tas::tas(char *filename)
+{
 	ifstream file(filename);
-	int nb,tmp;
-	
+	int nb, tmp;
+
 	file >> nb;
 
-	T = new int[nb];	
+	T = new int[nb];
 	n = 0;
-	for(int i = 0; i < nb ; i++){
+	for (int i = 0; i < nb; i++)
+	{
 		file >> tmp;
-		
+
 		insertion(tmp);
-		
 	}
 	file.close();
-
 }
-
 
 /****************************************/
 /* Objectif : Echange
@@ -57,7 +55,6 @@ void tas::echange(int &a, int &b)
 	b = tmp;
 }
 
-
 /****************************************/
 /* Objectif : Affichage
 /* Complexité : 0(n)
@@ -65,8 +62,8 @@ void tas::echange(int &a, int &b)
 void tas::affiche()
 {
 	cout << "T =";
-	for(int i = 0; i < n; i++)
-		cout << " " <<  T[i];
+	for (int i = 0; i < n; i++)
+		cout << " " << T[i];
 	cout << endl;
 }
 
@@ -76,34 +73,19 @@ void tas::affiche()
 /****************************************/
 void tas::insertion(int x)
 {
-  int indiceAjout = n;
-  int indicePere = ((indiceAjout - 1 ) / 2);
-
- // 
-  if (indiceAjout < max){
-
-if (indicePere < indicePere)
-		// on trouve 
-		T[indice] = x;
-		if ()
-
-		++n;
-	// On affecte la clé dans le tableau
-	//T[indice] = x;
-  }else{
-	cout << "Message d'erreur: taille maximale du tableau atteinte";
-  }
-
-
-
-
-   
-		
-   
-
-
-
-  
+	// Algorithme insertion dans un tas (diapo 136 du cours)
+	// Attention x >= 0
+	// Tableau objet
+	T[n] = x;
+	int indice = n;
+	while (indice >= 0 && T[indice] < T[((indice - 1) / 2)])
+	{
+		// on swape les valeurs
+		echange(T[indice], T[(indice - 1) / 2]);
+		indice = ((indice - 1) / 2);
+	}
+	// On incrémente
+	n++;
 }
 
 /****************************************/
@@ -112,7 +94,23 @@ if (indicePere < indicePere)
 /****************************************/
 void tas::reorganiser(int j)
 {
-	// !!! A FAIRE !!! //
+	// Algorithme réorganisation du tas (diapo 148 du cours)
+	int indice = j;
+	int m;
+	while (indice <= (n / 2) - 1)
+	{
+		if (T[(2 * indice) + 1] < T[(2 * indice) + 2])
+			m = (2 * indice) + 1;
+		else
+			m = (2 * indice) + 2;
+		if (T[indice] > T[m])
+		{
+			echange(T[indice], T[m]);
+			indice = m;
+		}
+		else
+			indice = n;
+	}
 }
 
 /****************************************/
@@ -121,8 +119,16 @@ void tas::reorganiser(int j)
 /****************************************/
 int tas::suppression()
 {
-    // !!! A FAIRE !!! //
-    return(0);
+	// Algorithme suppression basé sur le réorganisation (diapo 149 du cours)
+	// Attention indice tableau démarre à 0
+	int valeurMinimale = T[0];
+	// Propriété Objet à décrémenter
+	n--;
+	T[0] = T[n];
+	//--n;
+	// reorganiser(n);
+	reorganiser(0);
+	return (valeurMinimale);
 }
 
 /****************************************/
@@ -131,6 +137,13 @@ int tas::suppression()
 /****************************************/
 void tas::tri()
 {
-    // !!! A FAIRE !!! //
-}
+	// Algorithme suppression basé sur le réorganisation (diapo 150 du cours)
+	int valeurTemp = n;
 
+	while (n > 1)
+	{
+		int valeurMinimale = suppression();
+		T[n] = valeurMinimale;
+	}
+	n = valeurTemp;
+}
